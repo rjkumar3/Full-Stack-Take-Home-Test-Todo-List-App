@@ -1,0 +1,67 @@
+Back-End — todo-api (Express + Prisma + MySQL, TypeScript)
+Prereqs
+
+Node 20+
+
+Docker Desktop (to run MySQL via docker compose)
+
+1) Configure env
+cp .env.example .env
+# .env contains:
+# DATABASE_URL="mysql://root:password@localhost:3306/todo_db"
+# PORT=4000
+# CORS_ORIGIN=http://localhost:3000
+
+2) Start MySQL
+docker compose up -d      # starts MySQL 8 on localhost:3306
+
+3) Install deps
+pnpm i    # or: npm i
+
+4) Prisma — generate client + create schema + seed
+
+Choose either migrate (recommended during dev) or db push (non-interactive sync).
+
+Option A — Migrate (keeps migration history)
+
+pnpm prisma:generate               # = npx prisma generate
+pnpm prisma:migrate                # = npx prisma migrate dev --name init
+pnpm prisma:seed                   # seed sample tasks
+
+
+Option B — DB Push (quick schema sync)
+
+npx prisma generate
+npx prisma db push
+pnpm prisma:seed
+
+5) Run API
+pnpm dev                           # API at http://localhost:4000
+# Health checks:
+# GET /health  -> { ok: true }
+# GET /ready   -> { ready: true } (verifies DB connectivity)
+
+Quick Smoke (cURL)
+# Create
+curl -X POST http://localhost:4000/tasks \
+  -H 'Content-Type: application/json' \
+  -d '{"title":"Write docs","color":"purple"}'
+
+# List
+curl http://localhost:4000/tasks
+
+# Toggle complete
+curl -X PUT http://localhost:4000/tasks/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"completed":true}'
+
+# Delete
+curl -X DELETE http://localhost:4000/tasks/1 -i
+
+Troubleshooting
+
+ECONNREFUSED / DB errors: ensure MySQL container is up (docker compose ps), and DATABASE_URL matches host/port.
+
+CORS errors: add your web origin to CORS_ORIGIN (comma-separated list) and restart API.
+
+Prisma client errors: re-run npx prisma generate after schema changes.
