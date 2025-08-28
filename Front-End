@@ -1,0 +1,18 @@
+Front-End — todo-web (Next.js + Tailwind, TypeScript)
+Prereqs
+
+  Node 20+
+
+Backend API running (see todo-api below)
+
+Set NEXT_PUBLIC_API_URL to your API base (default: http://localhost:4000)
+
+Setup & Run
+  # from repo root
+  cp .env.local.example .env.local        # ensure API URL is correct
+  pnpm i      # or: npm i
+  pnpm dev    # http://localhost:3000
+
+Build & Start
+  pnpm build
+  pnpm start
